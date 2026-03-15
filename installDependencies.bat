@@ -1,5 +1,3 @@
-@echo off
-
 docker compose -f database/docker-compose.yml up -d --force-recreate
 
 if not exist venv (
