@@ -1,5 +1,5 @@
 from prisma import Prisma
-from features.core.jwt_handler import JWTHandler
+from features.auth.jwt_handler import JWTHandler
 
 
 class AuthService:
