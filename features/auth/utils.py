@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from features.core.jwt_handler import JWTHandler
+from features.auth.jwt_handler import JWTHandler
 
 bearer_scheme = HTTPBearer()
 
