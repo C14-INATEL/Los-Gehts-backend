@@ -3,10 +3,13 @@ from main import app
 
 client = TestClient(app)
 
+
+# TESTES UNITÁRIOS:
+
 # teste: app sobe sem erro
 def test_app_startup():
     response = client.get("/")
-    # pode dar 404 se não tiver rota raiz, mas não pode quebrar o7
+    # pode dar 404 se não tiver rota raiz, mas não pode quebrar    o7
     assert response.status_code in [200, 404]
 
 
