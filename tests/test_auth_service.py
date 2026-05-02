@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi.testclient import TestClient
 from main import app
 
@@ -176,3 +176,31 @@ async def test_login_returns_token():
     token = await service.login("alice", "SenhaSegura123!!!")
     jwt.create_token.assert_called_once_with(7)
     assert token == "fake-jwt-token"
+
+
+# ── TESTES UNITÁRIOS — JWTHandler (13–14) ────────────────────────────────────
+
+# teste 13: decode_token lança ValueError quando o token é inválido
+def test_jwt_decode_raises_on_invalid_token():
+    from features.auth.jwt_handler import JWTHandler
+    from unittest.mock import patch
+    from jose import JWTError
+
+    handler = JWTHandler(secret_key="fake-secret")
+
+    with patch("features.auth.jwt_handler.jwt.decode", side_effect=JWTError("bad token")):
+        with pytest.raises(ValueError, match="Invalid or expired token"):
+            handler.decode_token("token-invalido")
+
+
+# teste 14: is_valid retorna False quando o token é inválido
+def test_jwt_is_valid_returns_false_on_invalid_token():
+    from features.auth.jwt_handler import JWTHandler
+    from unittest.mock import patch
+    from jose import JWTError
+
+    handler = JWTHandler(secret_key="fake-secret")
+
+    with patch("features.auth.jwt_handler.jwt.decode", side_effect=JWTError("bad token")):
+        result = handler.is_valid("token-invalido")
+        assert result is False
