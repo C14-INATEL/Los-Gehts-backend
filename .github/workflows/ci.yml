@@ -41,8 +41,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: losgehts_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/losgehts_test
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
@@ -61,6 +76,9 @@ jobs:
 
       - name: Gerar cliente Prisma
         run: prisma generate
+
+      - name: Aplicar migrations no banco temporario
+        run: prisma db push
 
       - name: Rodar testes com pytest
         run: |
