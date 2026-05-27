@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+
+    environment {
+        SECRET_KEY      = credentials('secret-key')
+        DATABASE_URL    = 'postgresql://postgres:postgres@localhost:5432/losgehts_test'
+        EMAIL_TO        = 'phenriquelmarques4@gmail.com,nathaliaaparecida1804@gmail.com,victorgorgal@gmail.com'
+    }
+
+    stages {
+
+        // ── BUILD ──────────────────────────────────────────────────────────
+        stage('Build') {
+            steps {
+                sh '''
+                    python -m pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
+        // ── TESTES ────────────────────────────────────────────────────────
+        stage('Testes') {
+            steps {
+                sh '''
+                    prisma generate
+                    prisma db push
+                    pytest --tb=short -v
+                '''
+            }
+        }
+
+        // ── VERIFICACAO ───────────────────────────────────────────────────
+        stage('Verificacao') {
+            steps {
+                sh '''
+                    pip install flake8
+                    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+                '''
+            }
+        }
+
+        // ── DEPLOY ────────────────────────────────────────────────────────
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo 'Deploy configurado - adicione o webhook aqui quando tiver o servidor'
+            }
+        }
+    }
+
+    // ── NOTIFICACAO ───────────────────────────────────────────────────────
+    post {
+        success {
+            mail to: "${EMAIL_TO}",
+                 subject: "[Los Geht's] Pipeline OK - ${env.BRANCH_NAME}",
+                 body: """
+Repositorio : ${env.JOB_NAME}
+Branch      : ${env.BRANCH_NAME}
+Build       : ${env.BUILD_NUMBER}
+Status      : SUCESSO
+
+Veja o log em: ${env.BUILD_URL}
+"""
+        }
+        failure {
+            mail to: "${EMAIL_TO}",
+                 subject: "[Los Geht's] Pipeline FALHOU - ${env.BRANCH_NAME}",
+                 body: """
+Repositorio : ${env.JOB_NAME}
+Branch      : ${env.BRANCH_NAME}
+Build       : ${env.BUILD_NUMBER}
+Status      : FALHOU
+
+Veja o log em: ${env.BUILD_URL}
+"""
+        }
+    }
+}
