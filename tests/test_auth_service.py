@@ -67,7 +67,7 @@ def make_user(id=1, username="alice", password="secret"):
 def test_register_success(client):
     response = client.post(
         "/auth/register",
-        json={"username": "teste", "password": "123"}
+        json={"username": "teste", "password": "Senha123!"}
     )
 
     assert response.status_code == 201
@@ -78,7 +78,7 @@ def test_register_success(client):
 def test_register_error(client_error):
     response = client_error.post(
         "/auth/register",
-        json={"username": "teste", "password": "123"}
+        json={"username": "teste", "password": "Senha123!"}
     )
 
     assert response.status_code == 400
