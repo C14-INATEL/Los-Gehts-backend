@@ -5,6 +5,7 @@ pipeline {
         SECRET_KEY   = credentials('secret-key')
         DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/losgehts_test'
         PYTHON       = 'C:\\Users\\Bedro\\AppData\\Local\\Programs\\Python\\Python314\\python.exe'
+        PRISMA       = 'C:\\Users\\Bedro\\AppData\\Local\\Programs\\Python\\Python314\\Scripts\\prisma.exe'
     }
 
     stages {
@@ -23,8 +24,8 @@ pipeline {
         stage('Testes') {
             steps {
                 bat '''
-                    "%PYTHON%" -m prisma generate
-                    "%PYTHON%" -m prisma db push
+                    "%PRISMA%" generate
+                    "%PRISMA%" db push
                     "%PYTHON%" -m pytest --tb=short -v
                 '''
             }
