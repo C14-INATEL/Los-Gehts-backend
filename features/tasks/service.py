@@ -20,7 +20,7 @@ class TaskService:
                 }
             )
             return task
-        except PrismaError as e:
+        except (PrismaError, Exception) as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to create task: {str(e)}",
@@ -33,7 +33,7 @@ class TaskService:
                 order={"createdAt": "desc"},
             )
             return tasks
-        except PrismaError as e:
+        except (PrismaError, Exception) as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to fetch pending tasks: {str(e)}",
@@ -46,7 +46,7 @@ class TaskService:
                 order={"updatedAt": "desc"},
             )
             return tasks
-        except PrismaError as e:
+        except (PrismaError, Exception) as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to fetch completed tasks: {str(e)}",
@@ -57,7 +57,6 @@ class TaskService:
 
         update_data = data.model_dump(exclude_none=True)
 
-        # Rename due_date to dueDate for Prisma
         if "due_date" in update_data:
             update_data["dueDate"] = update_data.pop("due_date")
 
@@ -70,7 +69,7 @@ class TaskService:
                 data=update_data,
             )
             return task
-        except PrismaError as e:
+        except (PrismaError, Exception) as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to update task: {str(e)}",
@@ -85,7 +84,7 @@ class TaskService:
                 data={"completed": True},
             )
             return task
-        except PrismaError as e:
+        except (PrismaError, Exception) as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to complete task: {str(e)}",
@@ -96,7 +95,7 @@ class TaskService:
 
         try:
             await self.db.task.delete(where={"id": task_id})
-        except PrismaError as e:
+        except (PrismaError, Exception) as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to delete task: {str(e)}",
