@@ -24,8 +24,8 @@ pipeline {
         stage('Testes') {
             steps {
                 bat '''
-                    "%PRISMA%" generate
-                    "%PRISMA%" db push
+                    "%PRISMA%" generate --schema=prisma\\schema.prisma
+                    "%PRISMA%" db push --schema=prisma\\schema.prisma
                     "%PYTHON%" -m pytest --tb=short -v
                 '''
             }
