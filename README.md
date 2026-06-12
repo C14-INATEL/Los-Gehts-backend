@@ -1,5 +1,18 @@
 # Los Geht's — Backend
 
+## Indice
+
+- Pre-requisitos
+- Configuracao Inicial
+- Banco de Dados
+- Rodando o Servidor
+- Resolucao de Problemas
+- Jenkins Pipeline
+- Documentacao da API
+- Creditos e IA
+
+---
+
 ## Pré-requisitos
 
 Antes de começar, certifique-se de ter instalado:
@@ -29,6 +42,29 @@ Após a conclusão, o ambiente estará pronto para uso.
 
 ---
 
+## Banco de Dados
+
+### Subindo o PostgreSQL
+
+Para rodar o banco de dados localmente:
+
+cd database
+docker-compose up -d
+cd ..
+
+Isso ira:
+- Iniciar um container PostgreSQL com as configuracoes:
+  - Usuario: c14
+  - Senha: senhamuitosegura
+  - Banco: mydb2
+  - Porta: 5432
+
+### Resetando o banco
+
+wipeDB.bat
+
+---
+
 ## Rodando o servidor
 
 Com o projeto já configurado, execute:
@@ -55,6 +91,100 @@ Caso precise limpar todos os dados do banco e começar do zero:
 ```bash
 wipeDB.bat
 ```
+
+---
+
+## Jenkins Pipeline
+
+### O que e necessario?
+
+O pipeline automatiza:
+- Build da aplicacao
+- Execucao de testes
+- Linter (flake8)
+- Build da imagem Docker
+- Push para o Docker Hub
+- Deploy
+- Notificacoes por email
+
+### Passo 1: Subir o Jenkins
+
+Na raiz do projeto, execute:
+
+docker-compose up -d
+
+Isso ira:
+- Construir a imagem do Jenkins com todos os plugins necessarios
+- Iniciar o container na porta 8080
+- Montar o volume persistente para dados do Jenkins
+- Conectar o Docker socket (para builds de imagens)
+
+### Passo 2: Acessar o Jenkins
+
+1. Abra o navegador em http://localhost:8080
+
+### Passo 3: Configurar Credenciais
+
+No Jenkins, va em Manage Jenkins > Credentials > Global > Add Credentials:
+
+ID: jenkins-email-recipients
+Tipo: Secret text
+Valor: email1@gmail.com,email2@gmail.com
+
+ID: docker-hub-credentials
+Tipo: Username with password
+Valor: Seu usuario/senha do access token gerado em Docker Hub > account settings > personal access token
+
+### Passo 4: Configurar SMTP (Email)
+
+Va em Manage Jenkins > System > E-mail Notification:
+
+SMTP Server: smtp.gmail.com
+Use SMTP Authentication: Sim
+User Name: seu-email@gmail.com
+Password: App password do Gmail
+Use TLS: Sim
+SMTP Port: 587
+
+Para Gmail, gere um App Password em: Conta Google > Inicio
+Pesquise por "Senhas de app"
+
+Opcional: Para testar se esta funcionando, habilite a opcao "Test configuration..." e digite um endereco para receber um email de test
+
+Clique em Save
+
+### Passo 5: Rodar container do Banco de Dados (necessario para testes)
+
+O pipeline executa testes que exigem o PostgreSQL:
+
+cd database
+docker-compose up -d
+cd ..
+
+### Passo 6: Criar o Pipeline no Jenkins
+
+1. Clique em New Item
+2. Nome: los-gehts-backend
+3. Tipo: Pipeline
+4. Na secao Pipeline:
+   - Definition: Pipeline script from SCM
+   - SCM: Git
+   - Repository URL: https://github.com/C14-INATEL/Los-Gehts-backend
+   - Branch: */main
+   - Script Path: Jenkinsfile
+5. Clique em Save
+
+### Passo 7: Executar o Pipeline
+
+Clique em Build Now e acompanhe a execucao.
+
+O pipeline ira:
+1. Instalar dependencias
+2. Rodar testes com pytest
+3. Executar flake8
+4. Buildar imagem Docker
+5. Fazer push para o Docker Hub (apenas na branch main)
+6. Enviar notificacao de sucesso/fracasso
 
 ---
 
@@ -127,7 +257,7 @@ Autentica um usuário existente.
 ---
 
 <details>
-<summary>✅ Rotas de Tarefas (<code>/tasks</code>)</summary>
+<summary>Rotas de Tarefas (<code>/tasks</code>)</summary>
 
 <br>
 
@@ -280,3 +410,49 @@ Remove permanentemente uma tarefa.
 | 500 | Erro interno ao deletar no banco |
 
 </details>
+
+---
+
+## Créditos e IA
+
+Este projeto utilizou **DeepSeek** como assistente de IA para:
+
+- Criação e refinamento deste README
+- Geração dos Dockerfiles
+- Criação da documentação completa das rotas da API (autenticação e tarefas)
+- Correção de problemas no pipeline (plugins, credenciais, rede)
+- Ajuda com sintaxe do Jenkinsfile
+- Debug de erros de container e network
+
+### Exemplos de prompts utilizados:
+
+**Docker:**
+- *"Preciso de um Dockerfile para Jenkins com Docker CLI e plugins"*
+- *"Preciso de um Dockerfile para meu aplicativo python com prisma"*
+
+**Documentação da API:**
+- *"Documente as rotas de autenticação do meu projeto de acordo com esses arquivos"*
+- *"Crie documentação para as rotas de tarefas com exemplos de requisição e resposta"*
+- *"Adicione tabelas de erros para cada rota"*
+
+**Jenkins Pipeline:**
+- *"Atualize o README com as etapas do Jenkins pipeline"*
+- *"Como configurar credenciais e SMTP no Jenkins?"*
+
+### Como utilizamos as respostas
+
+Todo o conteúdo gerado pelo DeepSeek foi:
+- **Revisado manualmente**
+- **Adaptado ao contexto do projeto** (ajustando paths, variáveis de ambiente e comandos específicos)
+- **Formatado e padronizado** conforme as preferências da equipe (remoção de emojis, ajuste de linguagem e formatação, organização de seções)
+- **Testado na prática** antes de ser incorporado à documentação final
+
+A ferramenta foi utilizada como ponto de partida e assistente de aceleração, mas todas as soluções foram validadas e adaptadas às necessidades específicas do projeto.
+
+---
+
+**DeepSeek** demonstrou ser uma ferramenta valiosa para:
+- Acelerar a escrita de documentação técnica
+- Gerar boilerplate de configuração
+- Debugar erros comuns de infraestrutura
+- Sugerir boas práticas de DevOps
