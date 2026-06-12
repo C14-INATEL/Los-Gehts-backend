@@ -5,12 +5,14 @@ pipeline {
         SECRET_KEY   = credentials('secret-key')
 
         // Configuracoes do Docker Hub
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
         DOCKER_IMAGE = "${DOCKER_HUB_CREDS_USR}/c14-np2"
         DOCKER_TAG = "${BUILD_NUMBER}"
 
         DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/losgehts_test'
-        PYTHON       = './venv/Scripts/python.exe'
-        PRISMA       = './venv/Scripts/prisma.exe'
+        PROJECT_PATH = env.PROJECT_PATH
+        PYTHON = "${PROJECT_PATH}/venv/Scripts/python.exe"
+        PRISMA = "${PROJECT_PATH}/venv/Scripts/prisma.exe"
     }
 
     stages {
@@ -52,7 +54,7 @@ pipeline {
                 script {
                     echo 'Building Docker images...'
                     sh """
-                        docker build -f Dockerfile -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                        docker build -f ${PROJECT_PATH}/Dockerfile -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
                         docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
                     """
                 }
