@@ -4,8 +4,8 @@ pipeline {
     environment {
         SECRET_KEY   = credentials('secret-key')
         DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/losgehts_test'
-        PYTHON       = 'C:\\Users\\Bedro\\AppData\\Local\\Programs\\Python\\Python314\\python.exe'
-        PRISMA       = 'C:\\Users\\Bedro\\AppData\\Local\\Programs\\Python\\Python314\\Scripts\\prisma.exe'
+        PYTHON       = './venv/Scripts/python.exe'
+        PRISMA       = './venv/Scripts/prisma.exe'
     }
 
     stages {
