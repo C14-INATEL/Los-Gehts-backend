@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SECRET_KEY   = credentials('secret-key')
+        EMAIL_RECIPIENTS = credentials('jenkins-email-recipients')
 
         // Configuracoes do Docker Hub
         DOCKER_IMAGE = "${DOCKER_HUB_CREDS_USR}/c14-np2"
@@ -91,7 +91,7 @@ pipeline {
     post {
         success {
             emailext(
-                to: 'phenriquelmarques4@gmail.com,nathaliaaparecida1804@gmail.com,victorgorgal@gmail.com',
+                to: "${EMAIL_RECIPIENTS}",
                 subject: "[Los Geht's] Pipeline OK - ${env.BRANCH_NAME}",
                 body: """
 Repositorio : ${env.JOB_NAME}
@@ -105,7 +105,7 @@ Veja o log em: ${env.BUILD_URL}
         }
         failure {
             emailext(
-                to: 'phenriquelmarques4@gmail.com,nathaliaaparecida1804@gmail.com,victorgorgal@gmail.com',
+                to: "${EMAIL_RECIPIENTS}",
                 subject: "[Los Geht's] Pipeline FALHOU - ${env.BRANCH_NAME}",
                 body: """
 Repositorio : ${env.JOB_NAME}
