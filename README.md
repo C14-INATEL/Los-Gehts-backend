@@ -280,3 +280,51 @@ Remove permanentemente uma tarefa.
 | 500 | Erro interno ao deletar no banco |
 
 </details>
+
+## Créditos e IA
+
+Este projeto utilizou **DeepSeek** como assistente de IA para:
+
+- Criação e refinamento deste README
+- Criação da documentação completa das rotas da API (autenticação e tarefas)
+- Desenvolvimento e correção do Jenkinsfile
+- Configuração de credenciais e variáveis de ambiente no Jenkins
+- Debug de erros do pipeline (permissões, branches, workspace)
+- Ajuda com sintaxe do Jenkinsfile (environment, post, agent, credentials)
+
+### Exemplos de prompts utilizados:
+
+**Jenkinsfile e Pipeline:**
+- *"Como fazer o Jenkinsfile ler o Jenkinsfile do repositório?"*
+- *"Como passar a DATABASE_URL como variável de ambiente para o container nos testes?"*
+- *"Como carregar um caminho de projeto como variável no environment?"*
+- *"Como usar a variável WORKSPACE para definir caminhos relativos?"*
+- *"Qual a diferença entre agent any e agent { docker { ... } }?"*
+- *"Como corrigir o erro 'permission denied while trying to connect to the docker API'?"*
+- *"Como configurar o post para enviar e-mails com emailext?"*
+- *"Onde armazenar uma variável de ambiente que não é um credential no Jenkins?"*
+- *"Como limpar o workspace corrompido no Jenkins?"*
+- *"Como fazer o Jenkins apontar para uma branch específica em vez da main?"*
+
+**Documentação da API:**
+- *"Documente as rotas de autenticação do meu projeto de acordo com esses arquivos"*
+- *"Crie documentação para as rotas de tarefas com exemplos de requisição e resposta"*
+- *"Adicione tabelas de erros para cada rota"*
+
+### Como utilizamos as respostas
+
+Todo o conteúdo gerado pelo DeepSeek foi:
+- **Revisado manualmente** para garantir precisão técnica
+- **Adaptado ao contexto do projeto** (ajustando paths, nomes de branches, credenciais e URLs específicas)
+- **Formatado e padronizado** conforme as preferências da equipe (remoção de emojis, ajuste de linguagem, organização de seções)
+- **Testado na prática** antes de ser incorporado à documentação final
+
+A ferramenta foi utilizada como ponto de partida e assistente de aceleração, mas todas as soluções foram validadas e adaptadas às necessidades específicas do projeto.
+
+---
+
+**DeepSeek** demonstrou ser uma ferramenta valiosa para:
+- Acelerar a escrita de documentação técnica
+- Debugar erros comuns de pipeline e infraestrutura
+- Sugerir boas práticas de CI/CD com Jenkins
+- Ajudar na sintaxe correta do Groovy para Jenkinsfile

@@ -1,6 +1,6 @@
 node_modules
 # Keep environment variables out of version control in production, no need for small projects
-#.env
+.env
 
 ### Database ###
 ./database/images

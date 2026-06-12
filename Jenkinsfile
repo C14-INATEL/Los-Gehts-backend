@@ -3,9 +3,16 @@ pipeline {
 
     environment {
         SECRET_KEY   = credentials('secret-key')
+
+        // Configuracoes do Docker Hub
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
+        DOCKER_IMAGE = "${DOCKER_HUB_CREDS_USR}/c14-np2"
+        DOCKER_TAG = "${BUILD_NUMBER}"
+
         DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/losgehts_test'
-        PYTHON       = 'C:\\Users\\Bedro\\AppData\\Local\\Programs\\Python\\Python314\\python.exe'
-        PRISMA       = 'C:\\Users\\Bedro\\AppData\\Local\\Programs\\Python\\Python314\\Scripts\\prisma.exe'
+        PROJECT_PATH = env.PROJECT_PATH
+        PYTHON = "${PROJECT_PATH}/venv/Scripts/python.exe"
+        PRISMA = "${PROJECT_PATH}/venv/Scripts/prisma.exe"
     }
 
     stages {
@@ -39,6 +46,35 @@ pipeline {
                     "%PYTHON%" -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
                     "%PYTHON%" -m flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
                 '''
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    echo 'Building Docker images...'
+                    sh """
+                        docker build -f ${PROJECT_PATH}/Dockerfile -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                        docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
+                    """
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo 'Pushing image to Docker Hub...'
+                    sh """
+                        echo "${DOCKER_HUB_CREDS_PSW}" | docker login -u "${DOCKER_HUB_CREDS_USR}" --password-stdin
+                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        docker push ${DOCKER_IMAGE}:latest
+                        docker logout
+                    """
+                }
             }
         }
 
