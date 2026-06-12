@@ -3,6 +3,11 @@ pipeline {
 
     environment {
         SECRET_KEY   = credentials('secret-key')
+
+        // Configuracoes do Docker Hub
+        DOCKER_IMAGE = "${DOCKER_HUB_CREDS_USR}/c14-np2"
+        DOCKER_TAG = "${BUILD_NUMBER}"
+
         DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/losgehts_test'
         PYTHON       = './venv/Scripts/python.exe'
         PRISMA       = './venv/Scripts/prisma.exe'
@@ -39,6 +44,18 @@ pipeline {
                     "%PYTHON%" -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
                     "%PYTHON%" -m flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
                 '''
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    echo 'Building Docker images...'
+                    sh """
+                        docker build -f Dockerfile -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                        docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
+                    """
+                }
             }
         }
 
