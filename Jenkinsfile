@@ -5,33 +5,18 @@ pipeline {
         EMAIL_RECIPIENTS = credentials('jenkins-email-recipients')
 
         // Configuracoes do Docker Hub
+        DOCKER_HUB_CREDS = credentials('docker-hub-credentials')
         DOCKER_IMAGE = "${DOCKER_HUB_CREDS_USR}/c14-np2"
         DOCKER_TAG = "${BUILD_NUMBER}"
-
-        DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/losgehts_test'
-        PYTHON       = './venv/Scripts/python.exe'
-        PRISMA       = './venv/Scripts/prisma.exe'
     }
 
     stages {
-
-        // ── BUILD ──────────────────────────────────────────────────────────
-        stage('Build') {
-            steps {
-                bat '''
-                    "%PYTHON%" -m pip install --upgrade pip
-                    "%PYTHON%" -m pip install -r requirements.txt
-                '''
-            }
-        }
-
         // ── TESTES ────────────────────────────────────────────────────────
         stage('Testes') {
             steps {
-                bat '''
-                    "%PRISMA%" generate --schema=prisma\\schema.prisma
-                    "%PRISMA%" db push --schema=prisma\\schema.prisma
-                    "%PYTHON%" -m pytest --tb=short -v
+                sh '''
+                    prisma db push --schema=prisma/schema.prisma
+                    pytest --tb=short -v
                 '''
             }
         }
@@ -39,10 +24,9 @@ pipeline {
         // ── VERIFICACAO ───────────────────────────────────────────────────
         stage('Verificacao') {
             steps {
-                bat '''
-                    "%PYTHON%" -m pip install flake8
-                    "%PYTHON%" -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-                    "%PYTHON%" -m flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+                sh '''
+                    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
                 '''
             }
         }

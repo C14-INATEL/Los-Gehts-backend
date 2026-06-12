@@ -1,0 +1,10 @@
+# Core Pipeline plugins
+workflow-aggregator:latest
+workflow-multibranch:latest
+git:latest
+
+# Email notifications
+email-ext:latest
+
+# Credentials management
+credentials-binding:latest
