@@ -281,6 +281,31 @@ Remove permanentemente uma tarefa.
 
 </details>
 
+## Dinâmica de Desenvolvimento
+
+### Como o trabalho realmente aconteceu no dia a dia
+
+Nos dividimos entre front e back. Após isso, escolhemos uma abordagem orgânica: cada membro do grupo escolheu uma funcionalidade que achava mais interessante ou com a qual já tinha alguma familiaridade.
+
+### Divisão de tarefas e como decisões técnicas foram tomadas
+
+Algumas decisões técnicas foram tomadas de forma descentralizada, outras foram discutidas no grupo. Mas, em ambas as situações, havia comunicação do que havia sido feito.
+
+### Fluxo de branches, padrão de commits e processo de code review
+
+*Fluxo de branches*:
+- main — sempre estável, só recebia código via pull request aprovado.
+- feature/nome-da-feature — cada tarefa tinha sua branch.
+
+*Processo de code review*:
+Fizemos rodízio de review: cada um revisava o commit do outro.
+
+### Lições aprendidas — o que faríamos diferente em um próximo projeto
+
+Por não termos escolhido uma metodologia específica, acabamos tendo mais problemas relacionados à organização de tarefas. Portanto, em um próximo projeto, escolheríamos uma metodologia para nos ajudar.
+
+Além disso, inicialmente não criamos um guia concreto do que o nosso projeto deveria fazer. Isso acabou fazendo falta para mensurar em qual momento estávamos e quais seriam as próximas fases.
+
 ## Créditos e IA
 
 Este projeto utilizou **DeepSeek** como assistente de IA para:
